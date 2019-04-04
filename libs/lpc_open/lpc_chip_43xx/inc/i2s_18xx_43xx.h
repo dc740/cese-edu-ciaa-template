@@ -497,7 +497,7 @@ STATIC INLINE void Chip_I2S_SetRxXYDivider(LPC_I2S_T *pI2S, uint8_t xDiv, uint8_
  * @param	format	: Audio Format
  * @return	SUCCESS or ERROR
  */
-Status Chip_I2S_TxConfig(LPC_I2S_T *pI2S, I2S_AUDIO_FORMAT_T *format);
+Status Chip_I2S_TxConfig(LPC_I2S_T *pI2S, I2S_AUDIO_FORMAT_T *format, uint8_t mclk_enabled);
 
 /**
  * @brief   Configure I2S for Audio Format input

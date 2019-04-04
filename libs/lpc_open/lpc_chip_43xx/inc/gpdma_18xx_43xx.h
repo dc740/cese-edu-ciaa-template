@@ -371,7 +371,8 @@ Status Chip_GPDMA_Transfer(LPC_GPDMA_T *pGPDMA,
 						   uint32_t src,
 						   uint32_t dst,
 						   GPDMA_FLOW_CONTROL_T TransferType,
-						   uint32_t Size);
+						   uint32_t Size,
+						   uint32_t Config);
 
 /**
  * @brief	Do a DMA transfer using linked list of descriptors
@@ -384,7 +385,8 @@ Status Chip_GPDMA_Transfer(LPC_GPDMA_T *pGPDMA,
 Status Chip_GPDMA_SGTransfer(LPC_GPDMA_T *pGPDMA,
 							 uint8_t ChannelNum,
 							 const DMA_TransferDescriptor_t *DMADescriptor,
-							 GPDMA_FLOW_CONTROL_T TransferType);
+							 GPDMA_FLOW_CONTROL_T TransferType,
+							 uint32_t Config);
 
 /**
  * @brief	Prepare a single DMA descriptor

@@ -384,7 +384,8 @@ Status setupChannel(LPC_GPDMA_T *pGPDMA,
 					uint32_t CtrlWord,
 					uint32_t LinkListItem,
 					uint8_t SrcPeripheral,
-					uint8_t DstPeripheral)
+					uint8_t DstPeripheral,
+					uint32_t Config)
 {
 	GPDMA_CH_T *pDMAch;
 
@@ -403,9 +404,9 @@ Status setupChannel(LPC_GPDMA_T *pGPDMA,
 	/* Assign Linker List Item value */
 	pDMAch->LLI = LinkListItem;
 
-	/* Enable DMA channels, little endian */
-	pGPDMA->CONFIG = GPDMA_DMACConfig_E;
-	while (!(pGPDMA->CONFIG & GPDMA_DMACConfig_E)) {}
+	/* Enable DMA channels, and setup endianess*/
+	pGPDMA->CONFIG = Config;
+	while (!(pGPDMA->CONFIG & Config)) {}
 
 	pDMAch->SRCADDR = GPDMAChannelConfig->SrcAddr;
 	pDMAch->DESTADDR = GPDMAChannelConfig->DstAddr;
@@ -605,7 +606,8 @@ Status Chip_GPDMA_Transfer(LPC_GPDMA_T *pGPDMA,
 						   uint32_t src,
 						   uint32_t dst,
 						   GPDMA_FLOW_CONTROL_T TransferType,
-						   uint32_t Size)
+						   uint32_t Size,
+						   uint32_t Config)
 {
 	GPDMA_CH_CFG_T GPDMACfg;
 	uint8_t SrcPeripheral = 0, DstPeripheral = 0;
@@ -637,7 +639,7 @@ Status Chip_GPDMA_Transfer(LPC_GPDMA_T *pGPDMA,
 						(uint32_t) GPDMA_LUTPerBurst[dst],
 						(uint32_t) GPDMA_LUTPerWid[src],
 						(uint32_t) GPDMA_LUTPerWid[dst]);
-	if (setupChannel(pGPDMA, &GPDMACfg, cwrd, 0, SrcPeripheral, DstPeripheral) == ERROR) {
+	if (setupChannel(pGPDMA, &GPDMACfg, cwrd, 0, SrcPeripheral, DstPeripheral, Config) == ERROR) {
 		return ERROR;
 	}
 
@@ -692,7 +694,8 @@ Status Chip_GPDMA_PrepareDescriptor(LPC_GPDMA_T *pGPDMA,
 Status Chip_GPDMA_SGTransfer(LPC_GPDMA_T *pGPDMA,
 							 uint8_t ChannelNum,
 							 const DMA_TransferDescriptor_t *DMADescriptor,
-							 GPDMA_FLOW_CONTROL_T TransferType)
+							 GPDMA_FLOW_CONTROL_T TransferType,
+							 uint32_t Config)
 {
 	const DMA_TransferDescriptor_t *dsc = DMADescriptor;
 	GPDMA_CH_CFG_T GPDMACfg;
@@ -720,7 +723,7 @@ Status Chip_GPDMA_SGTransfer(LPC_GPDMA_T *pGPDMA,
 		DstPeripheral = configDMAMux(dst);
 	}
 
-	if (setupChannel(pGPDMA, &GPDMACfg, dsc->ctrl, dsc->lli, SrcPeripheral, DstPeripheral) == ERROR) {
+	if (setupChannel(pGPDMA, &GPDMACfg, dsc->ctrl, dsc->lli, SrcPeripheral, DstPeripheral, Config) == ERROR) {
 		return ERROR;
 	}
 

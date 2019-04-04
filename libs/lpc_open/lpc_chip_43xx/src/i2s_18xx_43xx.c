@@ -127,7 +127,7 @@ void Chip_I2S_DeInit(LPC_I2S_T *pI2S)
 }
 
 /* Configure I2S for Audio Format input */
-Status Chip_I2S_TxConfig(LPC_I2S_T *pI2S, I2S_AUDIO_FORMAT_T *format)
+Status Chip_I2S_TxConfig(LPC_I2S_T *pI2S, I2S_AUDIO_FORMAT_T *format, uint8_t mclk_enabled)
 {
 	uint32_t temp;
 	uint16_t xDiv, yDiv;
@@ -152,7 +152,11 @@ Status Chip_I2S_TxConfig(LPC_I2S_T *pI2S, I2S_AUDIO_FORMAT_T *format)
 	temp |= I2S_MASTER_MODE;
 	temp |= I2S_DAO_WS_HALFPERIOD(format->WordWidth - 1);
 	pI2S->DAO = temp;
-	pI2S->TXMODE = I2S_TXMODE_CLKSEL(0);
+	if (mclk_enabled) {
+		pI2S->TXMODE = I2S_TXMODE_MCENA;
+	} else {
+		pI2S->TXMODE = I2S_TXMODE_CLKSEL(0);
+	}
 	pI2S->TXBITRATE = N - 1;
 	pI2S->TXRATE = yDiv | (xDiv << 8);
 	return SUCCESS;

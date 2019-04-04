@@ -18,6 +18,9 @@
 # ---------- Your paths: -----------------------------------------------
 
 # Project path
-PROJECT_PATH = 
+#PROJECT_PATH = 
 # Project name
-PROJECT_NAME = app
+#PROJECT_NAME = app
+
+PROJECT_PATH = ./curso/rtos1
+PROJECT_NAME = player
