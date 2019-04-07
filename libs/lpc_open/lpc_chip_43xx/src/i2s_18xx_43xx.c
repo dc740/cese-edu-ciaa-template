@@ -103,14 +103,55 @@ STATIC Status getClkDiv(LPC_I2S_T *pI2S, I2S_AUDIO_FORMAT_T *format, uint16_t *p
 	return SUCCESS;
 }
 
+static const CGU_USBAUDIO_PLL_SETUP_T audioPLLSetup = {
+0x0000601D,
+0x0,
+0x0000201d ,
+0x16872b,
+24576000
+};
+
+/**
+ * Select i2s clock source:
+ * txrate register or BASE_AUDIO_CLK
+ */
+STATIC INLINE void i2s_by_transmit_mode(uint8_t enabled)
+{
+	if (enabled) {
+		//clear the bit
+		LPC_CREG->CREG6 &= ~(0x1 << 12);
+	} else {
+		//TODO: setup AUDIOPLL to be used to drive MCLK
+
+		// Connect the clock to base audio first.
+		// It's connected to CLKINPUT_PD by default during sysinit_18xx_43xx.c
+		// see "InitClkStates" for details on default clocks
+		Chip_Clock_SetBaseClock(CLK_BASE_APLL, CLKIN_AUDIOPLL,
+											true, false);
+		/* Setup default USB PLL state for a some random I found in the internet */
+		Chip_Clock_SetupPLL(CLKIN_AUDIOPLL, CGU_AUDIO_PLL, &audioPLLSetup);
+
+		/* enable AUDIO PLL */
+		Chip_Clock_EnablePLL(CGU_AUDIO_PLL);
+
+		/* Wait for PLL lock */
+		while (!(Chip_Clock_GetPLLStatus(CGU_AUDIO_PLL) & CGU_PLL_LOCKED)) {}
+
+
+		//set the bit
+		LPC_CREG->CREG6 |= 0x1 << 12;
+	}
+}
 /*****************************************************************************
  * Public functions
  ****************************************************************************/
+
 
 /* Initialize the I2S interface */
 void Chip_I2S_Init(LPC_I2S_T *pI2S)
 {
 	Chip_Clock_Enable(CLK_APB1_I2S);
+	i2s_by_transmit_mode(1); // Set the transmit mode by TXRATE register
 }
 
 /* Shutdown I2S */
@@ -153,7 +194,7 @@ Status Chip_I2S_TxConfig(LPC_I2S_T *pI2S, I2S_AUDIO_FORMAT_T *format, uint8_t mc
 	temp |= I2S_DAO_WS_HALFPERIOD(format->WordWidth - 1);
 	pI2S->DAO = temp;
 	if (mclk_enabled) {
-		pI2S->TXMODE = I2S_TXMODE_MCENA;
+		pI2S->TXMODE = I2S_TXMODE_MCENA | I2S_TXMODE_CLKSEL(0);
 	} else {
 		pI2S->TXMODE = I2S_TXMODE_CLKSEL(0);
 	}

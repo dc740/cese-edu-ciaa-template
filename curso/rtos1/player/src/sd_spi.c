@@ -2,8 +2,6 @@
 
 #include "board.h"
 #include "sapi.h"     // <= sAPI header
-#include <cmsis_43xx.h> //makes Eclipse happy
-
 #include "ff.h"       // <= Biblioteca FAT FS
 #include "fssdc.h"    // API de bajo nivel para unidad SD en FAT FS
 #include <string.h>
@@ -26,7 +24,8 @@
 //#define FS			48000
 //Sampling frequency with error correction - 48000*(100-2.3438)/100 = 46874.98Hz
 //#define FS			46875
-#define FS              44100
+//#define FS              44100
+#define FS              32000
 //#define FS              21250
 //#define FS              16000
 
@@ -35,7 +34,7 @@
 
 // I2S Port configuration
 #define SOUND_I2S_PORT LPC_I2S0
-#define SOUND_MIXER_BITS 16
+#define SOUND_MIXER_BITS 8
 typedef int16_t sample_type;
 #define SOUND_MIXER_CHANNELS 2
 //big endian for both DMA channels!!! and the enable bit 0
@@ -66,8 +65,9 @@ bool_t customSpiInit( spiMap_t spi )
       Chip_SCU_PinMuxSet(0x1, 3, (SCU_MODE_PULLUP | SCU_MODE_INBUFF_EN | SCU_MODE_ZIF_DIS | SCU_MODE_FUNC5)); // MISO1
       Chip_SCU_PinMuxSet(0x1, 4, (SCU_MODE_PULLUP | SCU_MODE_FUNC5)); // MOSI1
 
-      Chip_SCU_PinMuxSet(0x6, 1, (SCU_MODE_PULLUP | SCU_MODE_FUNC0)); // CS1 configured as GPIO
-      Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 3, 0);
+      // Don't use GPIO0 as it has important i2s RX functions. Use GPIO1
+      Chip_SCU_PinMuxSet(0x6, 4, (SCU_MODE_PULLUP | SCU_MODE_FUNC0)); // CS configured as GPIO
+      Chip_GPIO_SetPinDIROutput(LPC_GPIO_PORT, 3, 3);
 
       // Initialize SSP Peripheral
       Chip_SSP_Init( LPC_SSP1 );
@@ -114,11 +114,15 @@ void populate_wave(uint32_t pos){
 			/* Just fill the stream with sine! */
 			sample = (sample_type) (VOLUME * sinf(sinPos));
 			//Write sample to dma buffer
-			dmabuf[n] = sample;
+			//dmabuf[n] = sample;
 			if (n&1) {
 				//send the same in the 2 channels, but step sine after both. not always
 				sinPos += sinStep;
+				dmabuf[n] = 32767 - 1;//test code to see how it's encoding the bits (specially the MSB)
+			} else {
+				dmabuf[n] = -32768 + 1; //test code
 			}
+
 
 	}
 }
@@ -186,11 +190,13 @@ void initI2S0() {
 	Chip_GPIO_SetPinDIROutput (LPC_GPIO_PORT, 3, 15);
 	end of ENET_MDC*/
 }
+
 int main (void)
 {
 
 	boardConfig();
-	//customSpiInit( SPI0 );  TODO: re-include sd card support
+
+	customSpiInit( SPI0 ); // TODO: re-include sd card support
 
 	//Populate the entire buffer. Then we will send one half, and the
 	// DMA irq will trigger the next one.
@@ -208,7 +214,7 @@ int main (void)
 	printf("Dejando el control a la interrupcion de DMA\n");
 
 
-	/*
+/*
 	FSSDC_InitSPI ();
 	   if( f_mount( &fs, "SDC:", 0 ) != FR_OK ){
 	      while (1) {
@@ -226,7 +232,9 @@ int main (void)
 	      }
 	   } else
 	      printf(" Error al abrir archivo\n");
-	   fflush(stdout);*/
+	   fflush(stdout);
+	   while(1);*/
+
 		uint32_t oldDmaTc = 0;
 	   while (1) {
 		   if (dmaTransferComplete != oldDmaTc) { //only enter after a new one
