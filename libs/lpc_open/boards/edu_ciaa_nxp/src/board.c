@@ -145,7 +145,7 @@ static void Board_GPIO_Init()
 }
 
 
-static void Board_I2C_Init()
+void Board_I2C_Init()
 {
     Chip_I2C_Init(I2C0);
     Chip_SCU_I2C0PinConfig(BOARD_I2C_MODE);

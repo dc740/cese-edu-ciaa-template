@@ -36,6 +36,9 @@ extern "C" {
 #define BOARD_GPIO_7                7
 #define BOARD_GPIO_8                8
 
+#define I2CDEV_UDA1380_ADDR     (0x34 >> 1)
+#define UDA1380_I2C_BUS         I2C0
+
 #define BOARD_I2C_PORT              I2C0
 #define BOARD_SPI_PORT              LPC_SSP1
 
@@ -111,7 +114,7 @@ bool Board_TEC_GetStatus(uint8_t button);
 void Board_ADC_ReadBegin(ADC_CHANNEL_T channel);
 bool Board_ADC_ReadWait();
 uint16_t Board_ADC_ReadEnd();
-
+void Board_I2C_Init();
 
 #ifdef __cplusplus
 }

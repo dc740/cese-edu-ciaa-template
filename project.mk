@@ -23,4 +23,6 @@
 #PROJECT_NAME = app
 
 PROJECT_PATH = ./curso/rtos1
+#PROJECT_PATH = ./curso/pcse
 PROJECT_NAME = player
+#PROJECT_NAME = ejer_bluetooth

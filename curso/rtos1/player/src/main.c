@@ -4,6 +4,7 @@
 #include "sapi.h"     // <= sAPI header
 #include "ff.h"       // <= Biblioteca FAT FS
 #include "fssdc.h"    // API de bajo nivel para unidad SD en FAT FS
+#include "uda1380.h"
 #include <string.h>
 #include <stdint.h>
 #include <math.h>
@@ -13,7 +14,7 @@
 #define M_PI		3.14159265358979323846
 
 /* This is basically an arbitrary number for the tone generator*/
-#define VOLUME 127.0
+#define VOLUME 8.0
 
 
 //(DMA Buffer size)/2, this can be adjusted if samples seem to be dropped
@@ -25,16 +26,17 @@
 //Sampling frequency with error correction - 48000*(100-2.3438)/100 = 46874.98Hz
 //#define FS			46875
 //#define FS              44100
-#define FS              32000
+#define FS              44400
+//#define FS              32000
 //#define FS              21250
 //#define FS              16000
 
 //Waveform output frequency (subject to 2.34% error due to PLL)
-#define TONE_FREQUENCY		440
+#define TONE_FREQUENCY		880
 
 // I2S Port configuration
 #define SOUND_I2S_PORT LPC_I2S0
-#define SOUND_MIXER_BITS 8
+#define SOUND_MIXER_BITS 16
 typedef int16_t sample_type;
 #define SOUND_MIXER_CHANNELS 2
 //big endian for both DMA channels!!! and the enable bit 0
@@ -114,13 +116,13 @@ void populate_wave(uint32_t pos){
 			/* Just fill the stream with sine! */
 			sample = (sample_type) (VOLUME * sinf(sinPos));
 			//Write sample to dma buffer
-			//dmabuf[n] = sample;
+			dmabuf[n] = sample;
 			if (n&1) {
 				//send the same in the 2 channels, but step sine after both. not always
 				sinPos += sinStep;
-				dmabuf[n] = 32767 - 1;//test code to see how it's encoding the bits (specially the MSB)
+				//dmabuf[n] = 32767 - 1;//test code to see how it's encoding the bits (specially the MSB)
 			} else {
-				dmabuf[n] = -32768 + 1; //test code
+				//dmabuf[n] = -32768 + 1; //test code
 			}
 
 
@@ -163,13 +165,14 @@ void DMA_IRQHandler(void)
 #endif /* SAPI_USE_INTERRUPTS */
 
 
+
+
 void initI2S0() {
 	printf("Inicializando i2s\n");
-	Chip_SCU_PinMuxSet (3, 0, SCU_MODE_FUNC2); //i2s0 tx sck
-	Chip_SCU_PinMuxSet (3, 1, SCU_MODE_FUNC0); //i2s0 tx ws (también en 0,0 func6)
-	Chip_SCU_PinMuxSet (3, 2, SCU_MODE_FUNC0); //i2s0 tx sda
-	//Chip_SCU_PinMuxSet (0xF, 4, SCU_PINIO_FAST | SCU_MODE_FUNC6); //i2s0 tx mclk
-	Chip_SCU_PinMuxSet (0xF, 4, SCU_MODE_FUNC6); //i2s0 tx mclk
+	Chip_SCU_PinMuxSet (3, 0, SCU_PINIO_FAST | SCU_MODE_FUNC2); //i2s0 tx sck
+	Chip_SCU_PinMuxSet (3, 1, SCU_PINIO_FAST | SCU_MODE_FUNC0); //i2s0 tx ws (también en 0,0 func6)
+	Chip_SCU_PinMuxSet (3, 2, SCU_PINIO_FAST | SCU_MODE_FUNC0); //i2s0 tx sda
+	Chip_SCU_PinMuxSet (0xF, 4, SCU_PINIO_FAST | SCU_MODE_FUNC6); //i2s0 tx mclk
 	I2S_AUDIO_FORMAT_T i2sAudioFmt;
 	i2sAudioFmt.SampleRate = FS;
 	i2sAudioFmt.ChannelNumber = SOUND_MIXER_CHANNELS;
@@ -191,6 +194,20 @@ void initI2S0() {
 	end of ENET_MDC*/
 }
 
+
+/**
+ * Initialize i2c, and send a couple of commands to set up
+ * a working UDA1380 state.
+ */
+void initDac(){
+	// Default initialization routine
+	UDA1380_Init(0);
+	// custom setup touches
+
+	//I2S and DMA init
+	initI2S0();
+}
+
 int main (void)
 {
 
@@ -202,8 +219,8 @@ int main (void)
 	// DMA irq will trigger the next one.
 	populate_wave(0);
 	populate_wave(HALF_DMA_BUFSIZ);
-	//initialize i2s0, DMA and start the transfer
-	initI2S0();
+	initDac();
+	//Trigger the transfer
 	printf("Iniciando primera trama\n");
 	Chip_GPDMA_Transfer(LPC_GPDMA, dmaChannelNum_I2S_Tx,
 						(uint32_t) &dmabuf[0], //src is the bufffer
