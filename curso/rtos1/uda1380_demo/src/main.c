@@ -37,7 +37,7 @@ int main (void)
     printf("I2C initialization OK \r\n");
 	i2s_init();
 
-
+	delay(100);
     printf("I2S Initialization OK:\r\n");
 	UDA1380Init();///??? esta funcion estaba comentada?por?!
 	//delay_ms(1000);

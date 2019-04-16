@@ -177,7 +177,7 @@ void initI2S0() {
 	i2sAudioFmt.ChannelNumber = SOUND_MIXER_CHANNELS;
 	i2sAudioFmt.WordWidth = SOUND_MIXER_BITS;
 	Chip_I2S_Init (SOUND_I2S_PORT);
-	Chip_I2S_TxConfig (SOUND_I2S_PORT, &i2sAudioFmt, TRUE);
+	Chip_I2S_TxConfig (SOUND_I2S_PORT, &i2sAudioFmt, FALSE);
 	Chip_I2S_TxStop (SOUND_I2S_PORT);
 	Chip_I2S_DisableMute (SOUND_I2S_PORT);
 	Chip_I2S_TxStart (SOUND_I2S_PORT);
