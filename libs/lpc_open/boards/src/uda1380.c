@@ -61,14 +61,12 @@ static const uint8_t UDA_sys_regs_dat[] = {
 static const uint8_t UDA_interfil_regs_dat[] = {
 	UDA_MASTER_VOL_CTRL,/* 0x10 Register to which following data be written */
 	UDA1380_U8(UDA1380_REG_MSTRVOL_DEFAULT_VALUE),
-	//mixer volume 0x11   FIXME!!!!
+	//mixer volume 0x11
 	UDA1380_U8(UDA1380_REG_MIXVOL_DEFAULT_VALUE),
-	//UDA1380_U8(0xFF00), //WORKAROUND FOR THE ABOVE not being set
 	//Bass and treble 0x12
 	UDA1380_U8(UDA1380_REG_MODEBBT_DEFAULT_VALUE),
-	//Mute register 0x13  FIXME!!!
+	//Mute register 0x13
 	UDA1380_U8(UDA1380_REG_MSTRMUTE_DEFAULT_VALUE),
-	//UDA1380_U8(0x4800), //WORKAROUND FOR THE ABOVE not being set
 	//Mixer, silence detector and oversamplig register 0x14
 	UDA1380_U8(UDA1380_REG_MIXSDO_DEFAULT_VALUE)
 };
