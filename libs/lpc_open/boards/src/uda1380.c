@@ -38,33 +38,50 @@
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
-/* Defalut UDA values */
+/* Defalut UDA values
+ * Important: Remember registers are auto incremented after
+ * each write.
+ *
+ * */
 /* System Register Data Set */
 static const uint8_t UDA_sys_regs_dat[] = {
-	UDA_EVALM_CLK,	/* Register to which following data be written */
+	UDA_EVALM_CLK,	/* Initial Register to which following data be written */
 	UDA1380_U8(UDA1380_REG_EVALCLK_DEFAULT_VALUE),
+	//i2s register data:
 	UDA1380_U8(UDA1380_REG_I2S_DEFAULT_VALUE),
+	//PWRCTRL data
 	UDA1380_U8(UDA1380_REG_PWRCTRL_DEFAULT_VALUE),
+	//ANALOG MIXER Settings
 	UDA1380_U8(UDA1380_REG_ANAMIX_DEFAULT_VALUE),
+	//HEADPHONE AMP
 	UDA1380_U8(UDA1380_REG_HEADAMP_DEFAULT_VALUE)
 };
 
 /* System Register Data Set */
 static const uint8_t UDA_interfil_regs_dat[] = {
-	UDA_MASTER_VOL_CTRL,/* Register to which following data be written */
+	UDA_MASTER_VOL_CTRL,/* 0x10 Register to which following data be written */
 	UDA1380_U8(UDA1380_REG_MSTRVOL_DEFAULT_VALUE),
+	//mixer volume 0x11   FIXME!!!!
 	UDA1380_U8(UDA1380_REG_MIXVOL_DEFAULT_VALUE),
+	//UDA1380_U8(0xFF00), //WORKAROUND FOR THE ABOVE not being set
+	//Bass and treble 0x12
 	UDA1380_U8(UDA1380_REG_MODEBBT_DEFAULT_VALUE),
+	//Mute register 0x13  FIXME!!!
 	UDA1380_U8(UDA1380_REG_MSTRMUTE_DEFAULT_VALUE),
+	//UDA1380_U8(0x4800), //WORKAROUND FOR THE ABOVE not being set
+	//Mixer, silence detector and oversamplig register 0x14
 	UDA1380_U8(UDA1380_REG_MIXSDO_DEFAULT_VALUE)
 };
 
 /* decimator Register Data Set */
 static const uint8_t UDA_decimator_regs_dat[] = {
-	UDA_DEC_VOL_CTRL,	/* Register to which following data be written */
+	UDA_DEC_VOL_CTRL,	/* 0x20 Register to which following data be written */
 	UDA1380_U8(UDA1380_REG_DECVOL_DEFAULT_VALUE),
+	// 0x21
 	UDA1380_U8(UDA1380_REG_PGA_DEFAULT_VALUE),
+	// 0x22
 	UDA1380_U8(UDA1380_REG_ADC_DEFAULT_VALUE),
+	// 0x23
 	UDA1380_U8(UDA1380_REG_AGC_DEFAULT_VALUE)
 };
 

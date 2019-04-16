@@ -78,18 +78,45 @@
 #define EVCLK_PLL1            (1 << 1)
 #define EVCLK_PLL0            (1 << 0)
 
+
+#define UDA1380_REG_EVALM_ADC_SYSCLK             (0 << 5) //default SYSCLK (0)
+#define UDA1380_REG_EVALM_DAC_SYSCLK             (0 << 4) //default SYSCLK (0)
+#define UDA1380_REG_EVALM_ADC_WSPLL             (1 << 5) //default SYSCLK (0)
+#define UDA1380_REG_EVALM_DAC_WSPLL             (1 << 4) //default SYSCLK (0)
+
+#define UDA1380_REG_PWRCTRL_PWR_WSPLL            (1 << 15)
+#define UDA1380_REG_PWRCTRL_PWR_DAC            (1 << 10)
+#define UDA1380_REG_PWRCTRL_PWR_HEADPHONE            (1 << 13)
+
 /** UDA1380 register default values */
-#define UDA1380_REG_EVALCLK_DEFAULT_VALUE    (0xF << 8 | 0x3 << 4 | 1 << 1)
+//EVALCLK values:
+// ADC and DAC use WSPLL instead of SYSCLK
+// Enable Clocks for: interpolator, FSDAC, decimator, and ADC:
+#define UDA1380_REG_EVALCLK_DEFAULT_VALUE    (0xF << 8 | UDA1380_REG_EVALM_ADC_SYSCLK | UDA1380_REG_EVALM_DAC_SYSCLK | 1 << 1)
+//I2S format settings: Standard i2s
 #define UDA1380_REG_I2S_DEFAULT_VALUE        0x0000
 
-#define UDA1380_REG_PWRCTRL_DEFAULT_VALUE    (1 << 15 | 1 << 13 | 1 << 10 | 1 << 8 | 1 << 6 | 1 << 4 | 0x0F)
+//Use SYSCLK by default and don't power on WSPLL. There is time to regret this later
+//#define UDA1380_REG_PWRCTRL_DEFAULT_VALUE    (UDA1380_REG_PWRCTRL_PWR_WSPLL | UDA1380_REG_PWRCTRL_PWR_HEADPHONE | UDA1380_REG_PWRCTRL_PWR_DAC | 1 << 8 | 1 << 6 | 1 << 4 | 0x0F)
+#define UDA1380_REG_PWRCTRL_DEFAULT_VALUE    (UDA1380_REG_PWRCTRL_PWR_HEADPHONE | UDA1380_REG_PWRCTRL_PWR_DAC | 1 << 8 | 1 << 6 | 1 << 4 | 0x0F)
+
+//Analog mixer settings: Turn up the volume
 #define UDA1380_REG_ANAMIX_DEFAULT_VALUE     0x0000
+
+//Headphone amp settings: Required bits by datasheet. And also enable short-circuit protection
 #define UDA1380_REG_HEADAMP_DEFAULT_VALUE    ( 1 << 9 | 2)
 
+
+//master attenuation: as low as possible
 #define UDA1380_REG_MSTRVOL_DEFAULT_VALUE    0x0000
 #define UDA1380_REG_MIXVOL_DEFAULT_VALUE     0x0000
+//bass boost and treble: flat
 #define UDA1380_REG_MODEBBT_DEFAULT_VALUE    0x0000
-#define UDA1380_REG_MSTRMUTE_DEFAULT_VALUE   (2 << 8 | 2)
+
+//de emphasis filter: 44.1khz (update this when changing the frequency!)
+//#define UDA1380_REG_MSTRMUTE_DEFAULT_VALUE   (2 << 8 | 2)
+#define UDA1380_REG_MSTRMUTE_DEFAULT_VALUE   (0x0000)
+// Mixer, silence detector and oversampling settings: all defaults
 #define UDA1380_REG_MIXSDO_DEFAULT_VALUE     0x0000
 
 #define UDA1380_REG_DECVOL_DEFAULT_VALUE     0xE4E4	/* Decrease Volume -28dB */

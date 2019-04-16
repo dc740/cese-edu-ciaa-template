@@ -33,7 +33,7 @@ int main (void)
 	i2c_init();
     printf("I2C initialization OK \r\n");
 	i2s_init();
-
+	delay_ms(100); //let the the UDA1380 sense the clock or it won't accept the configuration for some registers
 
     printf("I2S Initialization OK:\r\n");
 	UDA1380Init();///??? esta funcion estaba comentada?por?!

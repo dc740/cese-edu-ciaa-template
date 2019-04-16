@@ -105,7 +105,7 @@ void  I2S_SndNchar( const unsigned char * datbuf, uint32_t* datbufpt_pt, uint32_
     Chip_I2S_Send(UDA1380_I2S_BUS,WavDat);
     //Chip_I2S_Send(UDA1380_I2S_BUS,0xAAAAAAAA);  //DEBUG HELPER
     *datbufpt_pt   += snd_N;				
-	while (Chip_I2S_GetTxLevel(UDA1380_I2S_BUS) != 0); //original
-    //while (Chip_I2S_GetTxLevel(UDA1380_I2S_BUS) >= 4);
+	//while (Chip_I2S_GetTxLevel(UDA1380_I2S_BUS) != 0); //original
+    while (Chip_I2S_GetTxLevel(UDA1380_I2S_BUS) >= 4); //FIFO is actually 8x32bit
 }
 

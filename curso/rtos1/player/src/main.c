@@ -5,6 +5,7 @@
 #include "ff.h"       // <= Biblioteca FAT FS
 #include "fssdc.h"    // API de bajo nivel para unidad SD en FAT FS
 #include "uda1380.h"
+#include "wavData.h"
 #include <string.h>
 #include <stdint.h>
 #include <math.h>
@@ -14,7 +15,7 @@
 #define M_PI		3.14159265358979323846
 
 /* This is basically an arbitrary number for the tone generator*/
-#define VOLUME 8.0
+#define VOLUME 127.0
 
 
 //(DMA Buffer size)/2, this can be adjusted if samples seem to be dropped
@@ -32,7 +33,7 @@
 //#define FS              16000
 
 //Waveform output frequency (subject to 2.34% error due to PLL)
-#define TONE_FREQUENCY		880
+#define TONE_FREQUENCY		220
 
 // I2S Port configuration
 #define SOUND_I2S_PORT LPC_I2S0
@@ -124,8 +125,6 @@ void populate_wave(uint32_t pos){
 			} else {
 				//dmabuf[n] = -32768 + 1; //test code
 			}
-
-
 	}
 }
 
@@ -200,12 +199,16 @@ void initI2S0() {
  * a working UDA1380 state.
  */
 void initDac(){
-	// Default initialization routine
-	UDA1380_Init(0);
-	// custom setup touches
-
 	//I2S and DMA init
 	initI2S0();
+
+	// Default initialization routine
+	// IMPORTANT: i2s clock MUST be working or the UDA1380 will lock
+	// some registers and you won't be able to change them
+	// so we add a small delay to let it sense it
+	delay(100);
+	UDA1380_Init(0);
+	// custom setup touches
 }
 
 int main (void)
@@ -227,7 +230,7 @@ int main (void)
 						I2S_DMA_TX_CHAN,
 						GPDMA_TRANSFERTYPE_M2P_CONTROLLER_DMA,
 						HALF_DMA_BUFSIZ,
-						DMA_CONFIG); //big endian
+						DMA_CONFIG);
 	printf("Dejando el control a la interrupcion de DMA\n");
 
 
