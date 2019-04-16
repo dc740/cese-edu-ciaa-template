@@ -24,5 +24,6 @@
 
 PROJECT_PATH = ./curso/rtos1
 #PROJECT_PATH = ./curso/pcse
-PROJECT_NAME = player
+#PROJECT_NAME = player
 #PROJECT_NAME = ejer_bluetooth
+PROJECT_NAME = uda1380_demo

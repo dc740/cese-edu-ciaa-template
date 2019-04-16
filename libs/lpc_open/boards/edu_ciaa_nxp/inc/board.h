@@ -35,8 +35,8 @@ extern "C" {
 #define BOARD_GPIO_6                6
 #define BOARD_GPIO_7                7
 #define BOARD_GPIO_8                8
-
-#define I2CDEV_UDA1380_ADDR     (0x34 >> 1)
+#define UDA1380_I2S_BUS   LPC_I2S0
+#define I2CDEV_UDA1380_ADDR     (0x18)//(0x18 | 2) is the other address. It depends on L3MODE pin
 #define UDA1380_I2C_BUS         I2C0
 
 #define BOARD_I2C_PORT              I2C0
