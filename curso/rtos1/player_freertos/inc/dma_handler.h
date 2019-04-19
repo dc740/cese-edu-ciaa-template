@@ -2,6 +2,8 @@
 #define CURSO_RTOS1_PLAYER_FREERTOS_INC_DMA_HANDLER_H_
 #include <stdint.h>
 #include <audio_generation.h>
+#include "FreeRTOS.h"
+#include "task.h"
 
 #define HALF_DMA_BUFSIZ	2000 //(DMA Buffer size)/2, this can be adjusted if samples seem to be dropped
 #define DMA_CONFIG (GPDMA_DMACConfig_E | 0x6) //big endian for both DMA channels!!! and the enable bit 0
@@ -9,6 +11,8 @@
 
 extern sample_type dmabuf[HALF_DMA_BUFSIZ*2];
 extern uint32_t dmaTransferComplete;
-static uint8_t dmaChannelNum_I2S_Tx;
+extern TaskHandle_t xTaskToNotifyAboutDMA;
+
+extern uint8_t dmaChannelNum_I2S_Tx;
 
 #endif /* CURSO_RTOS1_PLAYER_FREERTOS_INC_DMA_HANDLER_H_ */

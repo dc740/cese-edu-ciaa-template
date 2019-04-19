@@ -12,6 +12,9 @@
 void fillBufferTask( void* taskParmPtr )
 {
 	uint32_t oldDmaTc = 0; //TODO: convertir a semaforo
+
+	xTaskToNotifyAboutDMA = xTaskGetCurrentTaskHandle();
+
 	//Trigger the transfer
 	printf("Iniciando primera trama\n");
 	Chip_GPDMA_Transfer(LPC_GPDMA, dmaChannelNum_I2S_Tx,

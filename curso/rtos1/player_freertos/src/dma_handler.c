@@ -11,9 +11,14 @@
 
 sample_type dmabuf[HALF_DMA_BUFSIZ*2] = {0};
 uint32_t dmaTransferComplete = 0;
-static uint8_t dmaChannelNum_I2S_Tx;
+uint8_t dmaChannelNum_I2S_Tx;
 
-//TODO: implement semaphores
+
+/* Stores the handle of the task that will be notified when the
+transmission is complete. Notifications are 45% faster than semaphores */
+TaskHandle_t xTaskToNotifyAboutDMA = NULL;
+
+//TODO: implement semaphores (actually, use notifications which are faster)
 /**
  * @brief	DMA interrupt handler sub-routine
  * @return	Nothing
