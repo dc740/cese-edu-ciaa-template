@@ -29,8 +29,9 @@
  * this code.
  */
 
-#include "board.h"
 #include "uda1380.h"
+
+#include "board.h"
 
 /** @ingroup BOARD_COMMON_UDA1380
  * @{
