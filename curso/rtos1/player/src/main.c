@@ -27,9 +27,9 @@
 //Sampling frequency with error correction - 48000*(100-2.3438)/100 = 46874.98Hz
 //#define FS			46875
 //#define FS              44100
-#define FS              44400
+//#define FS              44400
 //#define FS              32000
-//#define FS              21250
+#define FS              21250
 //#define FS              16000
 
 //Waveform output frequency (subject to 2.34% error due to PLL)
@@ -37,8 +37,8 @@
 
 // I2S Port configuration
 #define SOUND_I2S_PORT LPC_I2S0
-#define SOUND_MIXER_BITS 16
-typedef int16_t sample_type;
+#define SOUND_MIXER_BITS 8
+typedef uint8_t sample_type;
 #define SOUND_MIXER_CHANNELS 2
 //big endian for both DMA channels!!! and the enable bit 0
 #define DMA_CONFIG (GPDMA_DMACConfig_E | 0x6)
@@ -108,22 +108,22 @@ static void mute_toggle()
 //Array population function
 float sinPos;
 float sinStep = 2 * M_PI * TONE_FREQUENCY / FS;
+uint32_t currentPCMPosition = 0;
 void populate_wave(uint32_t pos){
 	sample_type sample;
 	uint32_t n;
 
-	for(n = pos; n<pos+HALF_DMA_BUFSIZ; n++){
+	for(n = pos; n<pos+HALF_DMA_BUFSIZ; n=n+2){
 		int i=0;
 			/* Just fill the stream with sine! */
-			sample = (sample_type) (VOLUME * sinf(sinPos));
+			sample = (sample_type) Ref440_PCM[currentPCMPosition];
 			//Write sample to dma buffer
 			dmabuf[n] = sample;
-			if (n&1) {
-				//send the same in the 2 channels, but step sine after both. not always
-				sinPos += sinStep;
-				//dmabuf[n] = 32767 - 1;//test code to see how it's encoding the bits (specially the MSB)
-			} else {
-				//dmabuf[n] = -32768 + 1; //test code
+			dmabuf[n+1] = sample;
+			currentPCMPosition++;
+
+			if (currentPCMPosition > AUDIO_LEN-1){
+				currentPCMPosition = 0;
 			}
 	}
 }
