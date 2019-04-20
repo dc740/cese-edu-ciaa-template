@@ -24,7 +24,7 @@ TaskHandle_t xTaskToNotifyAboutDMA = NULL;
 __attribute__ ((section(".after_vectors")))
 void DMA_IRQHandler(void) {
 	static unsigned char ucLocalTickCount = 0;
-	static signed portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE; //FIXME? portBASE_TYPE defined but BaseType_t not?
+	static signed portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
 	if (Chip_GPDMA_Interrupt(LPC_GPDMA, dmaChannelNum_I2S_Tx) == SUCCESS) {
 		dmaChannelNum_I2S_Tx = Chip_GPDMA_GetFreeChannel(LPC_GPDMA,
@@ -45,8 +45,7 @@ void DMA_IRQHandler(void) {
 		vTaskNotifyGiveFromISR(xTaskToNotifyAboutDMA,
 				&xHigherPriorityTaskWoken);
 	} else {
-		/* Process error here */
-		printf("Error escribiendo buffer i2s\n");
+		/* Process error here some day */
 	}
 	/* If xHigherPriorityTaskWoken was set to true you we should yield. */
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);

@@ -10,7 +10,6 @@
 #define I2S_DMA_TX_CHAN GPDMA_CONN_I2S_Tx_Channel_0 //for i2s1 this is called GPDMA_CONN_I2S1_Tx_Channel_0
 
 extern sample_type dmabuf[HALF_DMA_BUFSIZ * 2];
-extern uint32_t dmaTransferComplete;
 extern TaskHandle_t xTaskToNotifyAboutDMA;
 
 extern uint8_t dmaChannelNum_I2S_Tx;
