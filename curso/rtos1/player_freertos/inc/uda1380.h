@@ -78,7 +78,6 @@
 #define EVCLK_PLL1            (1 << 1)
 #define EVCLK_PLL0            (1 << 0)
 
-
 #define UDA1380_REG_EVALM_ADC_SYSCLK             (0 << 5) //default SYSCLK (0)
 #define UDA1380_REG_EVALM_DAC_SYSCLK             (0 << 4) //default SYSCLK (0)
 #define UDA1380_REG_EVALM_ADC_WSPLL             (1 << 5) //default SYSCLK (0)
@@ -103,7 +102,6 @@
 
 //Headphone amp settings: Required bits by datasheet. And also enable short-circuit protection
 #define UDA1380_REG_HEADAMP_DEFAULT_VALUE    ( 1 << 9 | 2)
-
 
 //master attenuation: as low as possible
 #define UDA1380_REG_MSTRVOL_DEFAULT_VALUE    0x0000
@@ -140,13 +138,13 @@ extern "C" {
  */
 #define UDA1380_U8(val)        (((val) >> 8) & 0xFF), ((val) & 0xFF)
 
- /**
-  * @brief	Initialize UDA1380 to its default state
-  * @param	input	: Audio input source (Must be one of  #UDA1380_LINE_IN
-  *                    or #UDA1380_MIC_IN_L or #UDA1380_MIC_IN_LR)
-  * @return	1 on Success and 0 on failure
-  */
- int UDA1380_Init(int input);
+/**
+ * @brief	Initialize UDA1380 to its default state
+ * @param	input	: Audio input source (Must be one of  #UDA1380_LINE_IN
+ *                    or #UDA1380_MIC_IN_L or #UDA1380_MIC_IN_LR)
+ * @return	1 on Success and 0 on failure
+ */
+int UDA1380_Init(int input);
 
 /**
  * @brief	Write a 16-bit value to UDA Register
@@ -190,7 +188,8 @@ int UDA1380_REG_WriteMult(const uint8_t *buff, int len);
  * @param	len		: Length of bytes in value @a buff
  * @return	1 on Success & Data is valid, 0 on Failure
  */
-int UDA1380_REG_VerifyMult(uint8_t reg, const uint8_t *value, uint8_t *buff, int len);
+int UDA1380_REG_VerifyMult(uint8_t reg, const uint8_t *value, uint8_t *buff,
+		int len);
 
 #ifdef __cplusplus
 }

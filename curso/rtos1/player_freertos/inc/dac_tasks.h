@@ -8,7 +8,6 @@
 #ifndef CURSO_RTOS1_PLAYER_FREERTOS_INC_DAC_TASKS_H_
 #define CURSO_RTOS1_PLAYER_FREERTOS_INC_DAC_TASKS_H_
 
-
-void fillBufferTask( void* taskParmPtr );
+void fillBufferTask(void* taskParmPtr);
 
 #endif /* CURSO_RTOS1_PLAYER_FREERTOS_INC_DAC_TASKS_H_ */

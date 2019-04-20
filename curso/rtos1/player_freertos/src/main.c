@@ -24,25 +24,20 @@ void mySetupTask(void * pvParameters) {
 	populate_wave(HALF_DMA_BUFSIZ);
 	initDac();
 	// Start the other tasks
-	xTaskCreateStatic( fillBufferTask, "fillBufferTask", configMINIMAL_STACK_SIZE, NULL,
-		                     tskIDLE_PRIORITY+1, myTaskStack, &myTaskTCB);
+	xTaskCreateStatic(fillBufferTask, "fillBufferTask",
+	configMINIMAL_STACK_SIZE, NULL,
+	tskIDLE_PRIORITY + 1, myTaskStack, &myTaskTCB);
 
 	// Delete Setup task (ourselves).
 	vTaskDelete(NULL);
 }
 
-int main (void)
-{
-
-
-	   xTaskCreateStatic( mySetupTask, "mySetupTask", configMINIMAL_STACK_SIZE, NULL,
-	                     tskIDLE_PRIORITY+1, myTaskStack, &myTaskTCB);
-
-	   vTaskStartScheduler();
-
-	   while(1);
-
-
-
+int main(void) {
+	xTaskCreateStatic(mySetupTask, "mySetupTask", configMINIMAL_STACK_SIZE,
+	NULL,
+	tskIDLE_PRIORITY + 1, myTaskStack, &myTaskTCB);
+	vTaskStartScheduler();
+	while (1)
+		;
 	return 0;
 }

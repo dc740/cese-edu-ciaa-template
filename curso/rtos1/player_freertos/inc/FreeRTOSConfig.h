@@ -23,23 +23,22 @@
  * http://www.FreeRTOS.org
  */
 
-
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
 #include <chip.h>
 
 /*-----------------------------------------------------------
-* Application specific definitions.
-*
-* These definitions should be adjusted for your particular hardware and
-* application requirements.
-*
-* THESE PARAMETERS ARE DESCRIBED WITHIN THE 'CONFIGURATION' SECTION OF THE
-* FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE.
-*
-* See http://www.freertos.org/a00110.html.
-*----------------------------------------------------------*/
+ * Application specific definitions.
+ *
+ * These definitions should be adjusted for your particular hardware and
+ * application requirements.
+ *
+ * THESE PARAMETERS ARE DESCRIBED WITHIN THE 'CONFIGURATION' SECTION OF THE
+ * FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE.
+ *
+ * See http://www.freertos.org/a00110.html.
+ *----------------------------------------------------------*/
 
 /* Ensure stdint is only used by the compiler, and not the assembler. */
 #if defined( __ICCARM__ ) || defined( __ARMCC_VERSION )
@@ -47,7 +46,6 @@
 extern uint32_t SystemCoreClock;
 extern int DbgConsole_Printf( const char *fmt_s, ... );
 #endif
-
 
 #define configSUPPORT_STATIC_ALLOCATION              1
 
@@ -118,7 +116,7 @@ extern int DbgConsole_Printf( const char *fmt_s, ... );
 #define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY    5
 
 /* Interrupt priorities used by the kernel port layer itself.  These are generic
-* to all Cortex-M ports, and do not rely on any particular library functions. */
+ * to all Cortex-M ports, and do not rely on any particular library functions. */
 #define configKERNEL_INTERRUPT_PRIORITY \
     ( configLIBRARY_LOWEST_INTERRUPT_PRIORITY << ( 8 - configPRIO_BITS ) )
 
@@ -155,8 +153,8 @@ extern int DbgConsole_Printf( const char *fmt_s, ... );
  * macros can be used to turn turn off and on IO, clocks, the Flash etc. to obtain
  * the lowest power possible while the tick is off. */
 #if defined( __ICCARM__ ) || defined( __CC_ARM ) || defined( __GNUC__ )
-void vMainPreStopProcessing( void );
-void vMainPostStopProcessing( void );
+void vMainPreStopProcessing(void);
+void vMainPostStopProcessing(void);
 #endif /* defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__) */
 
 #define configPRE_STOP_PROCESSING     vMainPreStopProcessing
@@ -192,7 +190,7 @@ void vMainPostStopProcessing( void );
 /* Logging task definitions. */
 extern void vMainUARTPrintString( char * pcString );
 void vLoggingPrintf( const char * pcFormat,
-                     ... );
+		... );
 
 extern int iMainRand32( void );
 

@@ -8,14 +8,12 @@
 #include "board.h"
 #include "dma_handler.h"
 
-
-sample_type dmabuf[HALF_DMA_BUFSIZ*2] = {0};
+sample_type dmabuf[HALF_DMA_BUFSIZ * 2] = { 0 };
 uint32_t dmaTransferComplete = 0;
 uint8_t dmaChannelNum_I2S_Tx;
 
-
 /* Stores the handle of the task that will be notified when the
-transmission is complete. Notifications are 45% faster than semaphores */
+ transmission is complete. Notifications are 45% faster than semaphores */
 TaskHandle_t xTaskToNotifyAboutDMA = NULL;
 
 //TODO: implement semaphores (actually, use notifications which are faster)
@@ -30,7 +28,7 @@ void DMA_IRQHandler(void) {
 
 	if (Chip_GPDMA_Interrupt(LPC_GPDMA, dmaChannelNum_I2S_Tx) == SUCCESS) {
 		dmaChannelNum_I2S_Tx = Chip_GPDMA_GetFreeChannel(LPC_GPDMA,
-				I2S_DMA_TX_CHAN);
+		I2S_DMA_TX_CHAN);
 
 		Chip_GPDMA_Transfer(LPC_GPDMA, dmaChannelNum_I2S_Tx,
 				(uint32_t) &dmabuf[send_index], //src is the bufffer
@@ -43,15 +41,13 @@ void DMA_IRQHandler(void) {
 		} else {
 			send_index = HALF_DMA_BUFSIZ;
 		}
-		dmaTransferComplete++;
+		// Notify we need to populate the other half of the buffer
+		vTaskNotifyGiveFromISR(xTaskToNotifyAboutDMA,
+				&xHigherPriorityTaskWoken);
 	} else {
 		/* Process error here */
 		printf("Error escribiendo buffer i2s\n");
 	}
-
-	//xSemaphoreGiveFromISR(xSemaphore, &xHigherPriorityTaskWoken);
-
-
 	/* If xHigherPriorityTaskWoken was set to true you we should yield. */
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
