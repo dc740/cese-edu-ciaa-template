@@ -24,9 +24,9 @@ void mySetupTask(void * pvParameters) {
 	populate_wave(HALF_DMA_BUFSIZ);
 	initDac();
 	// Start the other tasks
-	xTaskCreateStatic(fillBufferTask, "fillBufferTask",
+	xTaskCreate(fillBufferTask, "fillBufferTask",
 	configMINIMAL_STACK_SIZE, NULL,
-	tskIDLE_PRIORITY + 1, myTaskStack, &myTaskTCB);
+	tskIDLE_PRIORITY + 1, xTaskToNotifyAboutDMA);
 
 	// Delete Setup task (ourselves).
 	vTaskDelete(NULL);

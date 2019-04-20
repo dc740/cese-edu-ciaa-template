@@ -28,7 +28,7 @@
  * copyright, permission, and disclaimer notice must appear in all copies of
  * this code.
  */
-
+#include <stdint.h>
 #include "uda1380.h"
 
 #include "board.h"

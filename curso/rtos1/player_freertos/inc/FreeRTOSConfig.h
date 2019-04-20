@@ -48,7 +48,7 @@ extern int DbgConsole_Printf( const char *fmt_s, ... );
 #endif
 
 #define configSUPPORT_STATIC_ALLOCATION              1
-
+#define configSUPPORT_DYNAMIC_ALLOCATION             1
 #define configUSE_PREEMPTION                         1
 #define configUSE_IDLE_HOOK                          0
 #define configUSE_TICK_HOOK                          0
@@ -164,7 +164,7 @@ void vMainPostStopProcessing(void);
  * standard names. */
 #define vPortSVCHandler               SVC_Handler
 #define xPortPendSVHandler            PendSV_Handler
-//#define xPortSysTickHandler           SysTick_Handler
+#define xPortSysTickHandler           SysTick_Handler
 #define vHardFault_Handler            HardFault_Handler
 
 /* IMPORTANT: This define MUST be commented when used with STM32Cube firmware,
