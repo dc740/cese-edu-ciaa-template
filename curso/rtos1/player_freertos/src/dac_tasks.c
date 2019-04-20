@@ -11,7 +11,7 @@
 
 void fillBufferTask(void* taskParmPtr) {
 	uint32_t ulNotificationValue;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000); //wait for 10 seconds. This is a symbolic value
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000); //wait for 10 seconds. This is a symbolic value. We always wait for the notification to begin the loop
 
 	xTaskToNotifyAboutDMA = xTaskGetCurrentTaskHandle();
 
@@ -25,7 +25,7 @@ void fillBufferTask(void* taskParmPtr) {
 //FIXME... el Notify Give From ISR pasa antes que llegar al take? Creo?
 	while (1) {
 		/* Wait for the transmission to complete. */
-		ulNotificationValue = ulTaskNotifyTake( pdFALSE, xMaxBlockTime);
+		ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
 
 		if (ulNotificationValue == 1) {
 			/* The transmission ended as expected.

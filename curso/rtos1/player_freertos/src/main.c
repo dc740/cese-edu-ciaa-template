@@ -15,7 +15,8 @@
 //FreeRTOS tasks
 StackType_t myTaskStack[configMINIMAL_STACK_SIZE];
 StaticTask_t myTaskTCB;
-
+StackType_t fillBufferTaskStack[configMINIMAL_STACK_SIZE];
+StaticTask_t fillBufferTaskTCB;
 void mySetupTask(void * pvParameters) {
 	//Setup steps
 	//Populate the entire buffer. Then we will send one half, and the
@@ -24,9 +25,9 @@ void mySetupTask(void * pvParameters) {
 	populate_wave(HALF_DMA_BUFSIZ);
 	initDac();
 	// Start the other tasks
-	xTaskCreate(fillBufferTask, "fillBufferTask",
+	xTaskCreateStatic(fillBufferTask, "fillBufferTask",
 	configMINIMAL_STACK_SIZE, NULL,
-	tskIDLE_PRIORITY + 1, xTaskToNotifyAboutDMA);
+	tskIDLE_PRIORITY + 1, fillBufferTaskStack, &fillBufferTaskTCB);
 
 	// Delete Setup task (ourselves).
 	vTaskDelete(NULL);

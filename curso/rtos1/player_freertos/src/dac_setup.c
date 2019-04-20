@@ -30,7 +30,8 @@ void initI2S0() {
 	Chip_I2S_DMA_TxCmd(SOUND_I2S_PORT, I2S_DMA_REQUEST_CHANNEL_1, ENABLE, 4); //dma channel 1=i2s tx, 2=i2s rx
 	Chip_GPDMA_Init(LPC_GPDMA);
 	NVIC_DisableIRQ(DMA_IRQn);
-	NVIC_SetPriority(DMA_IRQn, 3);
+	//NVIC_SetPriority(DMA_IRQn, 3);
+	NVIC_SetPriority( DMA_IRQn, 5 );
 	NVIC_EnableIRQ(DMA_IRQn);
 	printf("i2s listo\n");
 }
