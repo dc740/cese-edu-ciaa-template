@@ -22,7 +22,6 @@ void fillBufferTask(void* taskParmPtr) {
 			HALF_DMA_BUFSIZ,
 			DMA_CONFIG);
 	printf("Dejando el control a la interrupcion de DMA\n");
-//FIXME... el Notify Give From ISR pasa antes que llegar al take? Creo?
 	while (1) {
 		/* Wait for the transmission to complete. */
 		ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);

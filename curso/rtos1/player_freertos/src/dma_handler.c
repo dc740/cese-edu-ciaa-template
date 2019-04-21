@@ -16,7 +16,6 @@ uint8_t dmaChannelNum_I2S_Tx;
  transmission is complete. Notifications are 45% faster than semaphores */
 TaskHandle_t xTaskToNotifyAboutDMA = NULL;
 
-//TODO: implement semaphores (actually, use notifications which are faster)
 /**
  * @brief	DMA interrupt handler sub-routine
  * @return	Nothing
